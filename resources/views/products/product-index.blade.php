@@ -3,12 +3,28 @@
 @section('content')
     <div x-data="productManager()" x-init="init()">
 
+
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Products</h1>
             <button @click="openModal('create')"
                 class="flex items-center cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-white font-medium">
                 <i data-lucide="plus-circle" class="w-5 h-5 mr-1"></i> Add Product</button>
         </div>
+
+        <!-- Flash Mgs -->
+        @if (session()->has('success'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" transition
+                class="bg-green-50 border border-green-500 text-green-700 px-4 py-3 rounded relative my-2" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session()->has('error'))
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" transition
+                class="bg-red-50 border border-red-500 text-red-700 px-4 py-3 rounded relative my-2" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+        <!-- END Flash Mgs -->
 
         <!-- Table -->
         <div class="overflow-x-auto">
@@ -114,26 +130,26 @@
                     this.isModalOpen = true;
                     this.modalTitle = this.isView ? 'View Product' : type === 'create' ? 'Add Product' : 'Edit Product';
                     this.errors = [];
-                    this.form = productManager.defaultForm();  
+                    this.form = productManager.defaultForm();
 
                     if (product) {
                         Object.assign(this.form, {
-                            id:product.id,
-                            name:product.name,
-                            price:product.price,
-                            status:product.status,
-                            description:product.description,
-                            existingImages:product.images.map(image=>image.image),
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            status: product.status,
+                            description: product.description,
+                            existingImages: product.images.map(image => image.image),
                         });
 
-                        this.imagePreviews=product.images.map(img=>({                            
-                            url:`/storage/${img.image}`,
-                            type:'existing',
-                            file:img.image,
+                        this.imagePreviews = product.images.map(img => ({
+                            url: `/storage/${img.image}`,
+                            type: 'existing',
+                            file: img.image,
                         }));
-                        
-                    }else{
-                        this.imagePreviews=[];
+
+                    } else {
+                        this.imagePreviews = [];
                     }
 
                 },
