@@ -25,25 +25,40 @@
                 </thead>
                 <tbody>
                     @foreach ($products as $product)
-                    <tr>
-                        <td class="p-2 border border-gray-300">{{ $product->id }}</td>
-                        <td class="p-2 border border-gray-300">{{ $product->name }}</td>
-                        <td class="p-2 border border-gray-300">{{ $product->price }}</td>
-                        <td class="p-2 border border-gray-300">{{ $product->status }}</td>
-                        <td class="p-2 border border-gray-300">
-                            <img src="{{ asset('storage/products/6CPYgbhk9jqNQKRtRCue8yv1SJfI4XJMT4S1mkrh.png') }}" alt="" class="w-20 h-20">
-                            <img src="{{ asset('storage/' . $product->images->first()->image) }}" alt="" class="w-20 h-20">
-                        </td>
-                        <td class="p-2 border border-gray-300">
-                            <a href="{{ route('products.edit', $product->id) }}" class="mr-2">Edit</a>
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
+                        <tr>
+                            <td class="p-2 border border-gray-300">{{ $product->id }}</td>
+                            <td class="p-2 border border-gray-300">{{ $product->name }}</td>
+                            <td class="p-2 border border-gray-300">{{ $product->price }}</td>
+                            <td class="p-2 border border-gray-300">{{ $product->status }}</td>
+                            <td class="p-2 border border-gray-300">
+                                <img src="{{ asset('storage/' . $product->images->first()->image) }}" alt=""
+                                    class="w-20 h-20">
+                            </td>
+                            <td class="p-2 border border-gray-300 flex gap-2">
+
+                                <!-- view -->
+                                <button title="View" @click="openModal('view', {{ $product }})"
+                                    class="flex items-center cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-white font-medium">
+                                    <i data-lucide="eye" class="w-5 h-5 mr-1"></i>
+                                </button>
+                                <!-- END view -->
+
+                                <!-- edit -->
+                                <button title="Edit" @click="openModal('edit', {{ $product }})"
+                                    class="flex items-center cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-white font-medium">
+                                    <i data-lucide="pencil" class="w-5 h-5 mr-1"></i>
+                                </button>
+                                <!-- END edit -->
+
+                                <!-- delete -->
+                                <button title="Delete" @click="openModal('delete', {{ $product }})"
+                                    class="flex items-center cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-white font-medium">
+                                    <i data-lucide="trash" class="w-5 h-5 mr-1"></i>
+                                </button>
+                                <!-- END delete -->
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -82,18 +97,45 @@
                 form: productManager.defaultForm(),
                 imagePreviews: [],
                 errors: [],
+                isView: false,
 
                 // init lifecycle
                 init() {
-                    if(Alpine.store('productStore')?.isModalOpen){
+                    if (Alpine.store('productStore')?.isModalOpen) {
                         this.openModal('create');
                         Alpine.store('productStore').isModalOpen = false;
                     }
                 },
 
                 // open modal
-                openModal(type) {
+                openModal(type, product = null) {
+                    this.mode = type;
+                    this.isView = type === 'view';
                     this.isModalOpen = true;
+                    this.modalTitle = this.isView ? 'View Product' : type === 'create' ? 'Add Product' : 'Edit Product';
+                    this.errors = [];
+                    this.form = productManager.defaultForm();  
+
+                    if (product) {
+                        Object.assign(this.form, {
+                            id:product.id,
+                            name:product.name,
+                            price:product.price,
+                            status:product.status,
+                            description:product.description,
+                            existingImages:product.images.map(image=>image.image),
+                        });
+
+                        this.imagePreviews=product.images.map(img=>({                            
+                            url:`/storage/${img.image}`,
+                            type:'existing',
+                            file:img.image,
+                        }));
+                        
+                    }else{
+                        this.imagePreviews=[];
+                    }
+
                 },
 
                 // close modal
