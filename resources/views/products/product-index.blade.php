@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div x-data="productManager()">
+    <div x-data="productManager()" x-init="init()">
 
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Products</h1>
@@ -47,6 +47,21 @@
         <!-- Include Modal -->
         @include('products.partials.product-modal')
         <!-- END Include Modal -->
+
+
+        <!-- if any errors -->
+        @if ($errors->any())
+            <script>
+                document.addEventListener('alpine:init', () - > {
+                    Alpine.store('productStore', {
+                        isModalOpen: true,
+                    });
+                }).catch(error => {
+                    console.error(error);
+                });
+            </script>
+        @endif
+        <!-- END if any errors -->
     </div>
 @endsection
 
@@ -62,6 +77,14 @@
                 form: productManager.defaultForm(),
                 imagePreviews: [],
                 errors: [],
+
+                // init lifecycle
+                init() {
+                    if(Alpine.store('productStore')?.isModalOpen){
+                        this.openModal('create');
+                        Alpine.store('productStore').isModalOpen = false;
+                    }
+                },
 
                 // open modal
                 openModal(type) {
@@ -87,7 +110,7 @@
                     // Attaching dropped files to the actual file input
                     const dataTransfer = event.dataTransfer;
                     files.forEach(file => dataTransfer.items.add(file));
-                    this.$refs.images.files=dataTransfer.files;
+                    this.$refs.images.files = dataTransfer.files;
                 },
 
                 // process file handling
@@ -108,6 +131,22 @@
 
                 },
 
+
+                removeImage(index) {
+                    const image = this.imagePreviews[index];
+
+                    if (image.type === 'existing') {
+                        this.form.existingImages = $this.form.existingImages.filter(path => path !== image.image);
+                    } else if (image.type === 'new') {
+                        const fileIndex = this.form.images.findIndex(file => URL.createObjectURL(file) === image.url);
+
+                        if (fileIndex !== -1) {
+                            this.form.images.splice(fileIndex, 1);
+                        }
+                    }
+
+                    this.imagePreviews.splice(index, 1);
+                },
 
             }
         }
