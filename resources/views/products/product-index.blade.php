@@ -3,13 +3,14 @@
 @section('content')
     <div x-data="productManager()" x-init="init()">
 
-
+        <!-- add product -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Products</h1>
             <button @click="openModal('create')"
                 class="flex items-center cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-white font-medium">
                 <i data-lucide="plus-circle" class="w-5 h-5 mr-1"></i> Add Product</button>
         </div>
+        <!-- END add product -->
 
         <!-- Flash Mgs -->
         @if (session()->has('success'))
@@ -29,6 +30,7 @@
         <!-- Table -->
         <div class="overflow-x-auto">
             <table class="min-w-full border-collapse border border-gray-500">
+                <!-- headers -->
                 <thead>
                     <tr>
                         <th class="p-2 border border-gray-300">#</th>
@@ -39,6 +41,9 @@
                         <th class="p-2 border border-gray-300">Actions</th>
                     </tr>
                 </thead>
+                <!-- END headers -->
+
+                <!-- body -->
                 <tbody>
                     @foreach ($products as $product)
                         <tr>
@@ -72,7 +77,6 @@
                                 <!-- END edit -->
 
                                 <!-- delete -->
-
                                 <form action="{{ route('products.destroy', $product->id) }}" method="POST"
                                     onsubmit="return confirm('Are you sure you want to delete this product?')">
                                     @csrf
@@ -87,6 +91,7 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <!-- END body -->
             </table>
         </div>
         <!-- END Table -->
@@ -94,7 +99,6 @@
         <!-- Include Modal -->
         @include('products.partials.product-modal')
         <!-- END Include Modal -->
-
 
         <!-- if any errors -->
         @if ($errors->any())
@@ -204,7 +208,6 @@
                     });
 
                 },
-
 
                 removeImage(index) {
                     const image = this.imagePreviews[index];
