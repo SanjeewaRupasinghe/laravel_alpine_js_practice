@@ -24,11 +24,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- @foreach ($products as $product)
+                    @foreach ($products as $product)
                     <tr>
                         <td class="p-2 border border-gray-300">{{ $product->id }}</td>
                         <td class="p-2 border border-gray-300">{{ $product->name }}</td>
                         <td class="p-2 border border-gray-300">{{ $product->price }}</td>
+                        <td class="p-2 border border-gray-300">{{ $product->status }}</td>
+                        <td class="p-2 border border-gray-300">
+                            <img src="{{ asset('storage/products/6CPYgbhk9jqNQKRtRCue8yv1SJfI4XJMT4S1mkrh.png') }}" alt="" class="w-20 h-20">
+                            <img src="{{ asset('storage/' . $product->images->first()->image) }}" alt="" class="w-20 h-20">
+                        </td>
                         <td class="p-2 border border-gray-300">
                             <a href="{{ route('products.edit', $product->id) }}" class="mr-2">Edit</a>
                             <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
@@ -38,7 +43,7 @@
                             </form>
                         </td>
                     </tr>
-                @endforeach --}}
+                @endforeach
                 </tbody>
             </table>
         </div>
