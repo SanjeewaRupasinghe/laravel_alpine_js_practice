@@ -7,4 +7,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('products', ProductController::class);
+Route::get('/', [ProductController::class, 'index']);
+Route::resource('products', ProductController::class)
+    ->only([
+        'store',
+        'update',
+        'destroy'
+    ]);

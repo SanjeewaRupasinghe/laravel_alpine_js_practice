@@ -8,6 +8,8 @@ class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -22,11 +24,11 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string|max:255',
-            'price'=>'required|numeric',
-            'status'=>'required|in:active,inactive',
-            'description'=>'required|string',
-            'images.*'=>[$this->images?'nullable':'required|array'],
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|numeric',
+            'status'      => 'required|in:active,inactive',
+            'description' => 'required|string',
+            'images.*'    => [$this->images ? 'nullable' : 'required|array'],
         ];
     }
 }

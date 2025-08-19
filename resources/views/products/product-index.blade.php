@@ -44,9 +44,14 @@
                         <tr>
                             <td class="p-2 border border-gray-300">{{ $product->id }}</td>
                             <td class="p-2 border border-gray-300">{{ $product->name }}</td>
-                            <td class="p-2 border border-gray-300">{{ $product->price }}</td>
-                            <td class="p-2 border border-gray-300">{{ $product->status }}</td>
-                            <td class="p-2 border border-gray-300">
+                            <td class="p-2 border border-gray-300 text-end">{{ number_format($product->price, 2) }}</td>
+                            <td class="p-2 border border-gray-300 text-center">
+                                <span
+                                    class="px-2 py-1 rounded-full text-xs font-medium {{ $product->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $product->status }}
+                                </span>
+                            </td>
+                            <td class="p-2 border border-gray-300 text-center">
                                 <img src="{{ asset('storage/' . $product->images->first()->image) }}" alt=""
                                     class="w-20 h-20">
                             </td>
@@ -55,22 +60,28 @@
                                 <!-- view -->
                                 <button title="View" @click="openModal('view', {{ $product }})"
                                     class="flex items-center cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-white font-medium">
-                                    <i data-lucide="eye" class="w-5 h-5 mr-1"></i>
+                                    <i data-lucide="eye" class="w-5 h-5"></i>
                                 </button>
                                 <!-- END view -->
 
                                 <!-- edit -->
                                 <button title="Edit" @click="openModal('edit', {{ $product }})"
                                     class="flex items-center cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-white font-medium">
-                                    <i data-lucide="pencil" class="w-5 h-5 mr-1"></i>
+                                    <i data-lucide="pencil" class="w-5 h-5"></i>
                                 </button>
                                 <!-- END edit -->
 
                                 <!-- delete -->
-                                <button title="Delete" @click="openModal('delete', {{ $product }})"
-                                    class="flex items-center cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-white font-medium">
-                                    <i data-lucide="trash" class="w-5 h-5 mr-1"></i>
-                                </button>
+
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this product?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button title="Delete" type="submit"
+                                        class="flex items-center cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-white font-medium">
+                                        <i data-lucide="trash" class="w-5 h-5"></i>
+                                    </button>
+                                </form>
                                 <!-- END delete -->
                             </td>
                         </tr>
